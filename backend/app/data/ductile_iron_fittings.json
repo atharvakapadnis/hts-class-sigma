@@ -1,0 +1,532 @@
+{
+    "product_catalog": {
+        "metadata": {
+            "version": "1.0",
+            "last_updated": "2025-04-01",
+            "total_products": 5,
+            "company": "SIGMA"
+        },
+        "products": [
+            {
+                "id": "c153-ductile-iron-mj",
+                "product_code": "C153",
+                "title": "C153 Ductile Iron Mechanical Joint Fittings",
+                "joint_type": "Mechanical Joint",
+                "body_design": "Compact/Short Body",
+                "primary_standard": "ANSI/AWWA C153/A21.53",
+                "specifications": {
+                    "size_range": "2\" - 64\"",
+                    "material": {
+                        "type": "Ductile Iron",
+                        "standard": "ASTM A536",
+                        "grades": [
+                            "65-45-12",
+                            "60-42-10",
+                            "70-50-05"
+                        ]
+                    },
+                    "pressure_ratings": [
+                        {
+                            "sizes": "2\" - 24\"",
+                            "psi": 350
+                        },
+                        {
+                            "sizes": "30\" - 48\"",
+                            "psi": 250
+                        },
+                        {
+                            "sizes": "54\" - 64\"",
+                            "psi": 150
+                        }
+                    ],
+                    "deflection_limits": [
+                        {
+                            "sizes": "3\" - 4\"",
+                            "max_degrees": 8
+                        },
+                        {
+                            "sizes": "6\"",
+                            "max_degrees": 7
+                        },
+                        {
+                            "sizes": "8\" - 12\"",
+                            "max_degrees": 5
+                        },
+                        {
+                            "sizes": "14\" - 48\"",
+                            "max_degrees": 3
+                        }
+                    ]
+                },
+                "construction": {
+                    "lining": "Double cement-lined per ANSI/AWWA C104/A21.4",
+                    "coating": {
+                        "interior": "Asphaltic seal coat per ANSI AWWA C104/A21.4 (NSF61)",
+                        "exterior": "Asphaltic seal coat per ANSI/AWWA C153/A21.53 (NSF61)"
+                    },
+                    "gaskets": {
+                        "standard": "SBR",
+                        "optional": [
+                            "EPDM",
+                            "NBR",
+                            "CR"
+                        ],
+                        "standard_ref": "ANSI/AWWA C111/A21.11"
+                    },
+                    "fasteners": "Low alloy corrosion-resistant high-strength steel T-bolts per ANSI/AWWA C111/A21.11"
+                },
+                "testing": {
+                    "hydrostatic_testing": true,
+                    "heat_coded_traceability": true,
+                    "standards": [
+                        "ANSI/AWWA C153/A21.53",
+                        "UL-FM requirements"
+                    ]
+                },
+                "certifications": {
+                    "nsf61": true,
+                    "nsf61_annex_g": true,
+                    "nsf372": true,
+                    "ul_listed": "3\" - 16\"",
+                    "fm_approved": "3\" - 16\""
+                },
+                "installation": {
+                    "standards": [
+                        "ANSI/AWWA C600",
+                        "ANSI/AWWA C111"
+                    ],
+                    "compatible_pipes": [
+                        "DIP (C150/C151)",
+                        "PVC (C900/C905, C909)"
+                    ],
+                    "special_notes": "For sewer applications requiring mandrel passage, fittings should be pre-checked. SIGMA disclaims responsibility for back charges."
+                },
+                "metadata": {
+                    "source_document": "C153_Ductile_Iron_MJ_Fittings_Summary.txt",
+                    "revision_date": "April 2025",
+                    "category": "Pipe Fittings",
+                    "subcategory": "Ductile Iron Fittings",
+                    "keywords": [
+                        "C153",
+                        "mechanical joint",
+                        "compact",
+                        "short body",
+                        "ductile iron",
+                        "water fittings",
+                        "sewer fittings",
+                        "AWWA",
+                        "pressure fitting",
+                        "cement lined",
+                        "asphaltic coating",
+                        "deflection",
+                        "T-bolts",
+                        "gaskets"
+                    ],
+                    "search_text": "C153 ductile iron mechanical joint compact short body fittings water sewer pressure rated cement lined asphaltic coating deflection allowable AWWA ANSI standard fitting pipe connection T-bolts gaskets SBR EPDM NBR CR traceability hydrostatic testing"
+                }
+            },
+            {
+                "id": "c110-ductile-iron-mj",
+                "product_code": "C110",
+                "title": "C110 Ductile Iron Mechanical Joint Fittings",
+                "joint_type": "Mechanical Joint",
+                "body_design": "Full Body",
+                "primary_standard": "ANSI/AWWA C110/A21.10",
+                "specifications": {
+                    "size_range": "2\" - 48\"",
+                    "material": {
+                        "type": "Ductile Iron",
+                        "standard": "ASTM A536",
+                        "grades": [
+                            "65-45-12",
+                            "60-42-10",
+                            "70-50-05"
+                        ]
+                    },
+                    "pressure_ratings": [
+                        {
+                            "sizes": "2\" - 24\"",
+                            "psi": 350
+                        },
+                        {
+                            "sizes": "30\" - 48\"",
+                            "psi": 250
+                        }
+                    ],
+                    "deflection_limits": [
+                        {
+                            "sizes": "3\" - 4\"",
+                            "max_degrees": 8
+                        },
+                        {
+                            "sizes": "6\"",
+                            "max_degrees": 7
+                        },
+                        {
+                            "sizes": "8\" - 12\"",
+                            "max_degrees": 5
+                        },
+                        {
+                            "sizes": "14\" - 48\"",
+                            "max_degrees": 3
+                        }
+                    ]
+                },
+                "construction": {
+                    "lining": "Double cement-lined per ANSI/AWWA C104/A21.4",
+                    "coating": {
+                        "interior": "Asphaltic seal coat per ANSI AWWA C104/A21.4 (NSF61)",
+                        "exterior": "Asphaltic seal coat per ANSI/AWWA C110/A21.10 (NSF61)"
+                    },
+                    "gaskets": {
+                        "standard": "SBR",
+                        "optional": [
+                            "EPDM",
+                            "NBR",
+                            "CR"
+                        ],
+                        "standard_ref": "ANSI/AWWA C111/A21.11"
+                    },
+                    "fasteners": "High-strength, low-alloy, corrosion-resistant steel T-bolts per ANSI/AWWA C111/A21.11"
+                },
+                "testing": {
+                    "hydrostatic_testing": true,
+                    "heat_coded_traceability": true,
+                    "standards": [
+                        "ANSI/AWWA C110/A21.10",
+                        "UL-FM requirements"
+                    ]
+                },
+                "certifications": {
+                    "nsf61": true,
+                    "nsf61_annex_g": true,
+                    "nsf372": true,
+                    "ul_listed": "3\" - 16\"",
+                    "fm_approved": "3\" - 16\""
+                },
+                "installation": {
+                    "standards": [
+                        "ANSI/AWWA C600",
+                        "ANSI/AWWA C111"
+                    ],
+                    "compatible_pipes": [
+                        "DIP (C150/C151)",
+                        "PVC (C900/C905, C909)"
+                    ],
+                    "special_notes": "Mandrel passage check recommended for sewer applications; no liability for back charges due to non-compliance."
+                },
+                "metadata": {
+                    "source_document": "C110_Ductile_Iron_MJ_Fittings_Summary.txt",
+                    "revision_date": "April 2025",
+                    "category": "Pipe Fittings",
+                    "subcategory": "Ductile Iron Fittings",
+                    "keywords": [
+                        "C110",
+                        "mechanical joint",
+                        "full body",
+                        "ductile iron",
+                        "water fittings",
+                        "sewer fittings",
+                        "AWWA",
+                        "pressure fitting",
+                        "cement lined",
+                        "asphaltic coating",
+                        "deflection",
+                        "T-bolts",
+                        "gaskets"
+                    ],
+                    "search_text": "C110 ductile iron mechanical joint full body fittings water sewer pressure rated cement lined asphaltic coating deflection allowable AWWA ANSI standard fitting pipe connection T-bolts gaskets SBR EPDM NBR CR traceability hydrostatic testing"
+                }
+            },
+            {
+                "id": "c110-ductile-iron-flanged",
+                "product_code": "C110",
+                "title": "C110 Ductile Iron Flanged Fittings",
+                "joint_type": "Flanged Joint",
+                "body_design": "Full Body",
+                "primary_standard": "ANSI/AWWA C110/A21.10",
+                "specifications": {
+                    "size_range": "2\" - 64\"",
+                    "material": {
+                        "type": "Ductile Iron",
+                        "standard": "ASTM A536",
+                        "grades": [
+                            "65-45-12",
+                            "60-42-10",
+                            "70-50-05"
+                        ]
+                    },
+                    "pressure_ratings": [
+                        {
+                            "sizes": "All sizes",
+                            "psi": 250
+                        }
+                    ],
+                    "deflection_limits": [
+                        {
+                            "sizes": "All sizes",
+                            "max_degrees": 0,
+                            "note": "No deflection allowance at flange joints"
+                        }
+                    ]
+                },
+                "construction": {
+                    "lining": "Double cement-lined per ANSI/AWWA C104/A21.4",
+                    "coating": {
+                        "interior": "Asphaltic seal coat per ANSI AWWA C104/A21.4 (NSF61)",
+                        "exterior": "Asphaltic seal coat per ANSI/AWWA C110/A21.10 (NSF61)"
+                    },
+                    "gaskets": {
+                        "standard": "Full-face rubber gaskets",
+                        "optional": [],
+                        "standard_ref": "Standard industry practice"
+                    },
+                    "fasteners": "Standard flange bolts per ANSI/AWWA C110 specifications"
+                },
+                "testing": {
+                    "hydrostatic_testing": true,
+                    "heat_coded_traceability": true,
+                    "standards": [
+                        "ANSI/AWWA C110/A21.10",
+                        "UL-FM requirements"
+                    ]
+                },
+                "certifications": {
+                    "nsf61": true,
+                    "nsf61_annex_g": true,
+                    "nsf372": true,
+                    "ul_listed": "Applicable sizes",
+                    "fm_approved": "Applicable sizes"
+                },
+                "installation": {
+                    "standards": [
+                        "ANSI/AWWA C600",
+                        "Flange installation best practices"
+                    ],
+                    "compatible_pipes": [
+                        "DIP (C150/C151)",
+                        "PVC (C900/C905, C909)"
+                    ],
+                    "special_notes": "Rigid flange connections with no deflection allowance."
+                },
+                "metadata": {
+                    "source_document": "C110_Ductile_Iron_Flanged_Fittings_Summary.txt",
+                    "revision_date": "April 2025",
+                    "category": "Pipe Fittings",
+                    "subcategory": "Ductile Iron Fittings",
+                    "keywords": [
+                        "C110",
+                        "flanged joint",
+                        "full body",
+                        "ductile iron",
+                        "rigid connection",
+                        "water fittings",
+                        "sewer fittings",
+                        "AWWA",
+                        "pressure fitting",
+                        "cement lined",
+                        "asphaltic coating",
+                        "flange bolts",
+                        "rubber gaskets"
+                    ],
+                    "search_text": "C110 ductile iron flanged fittings full body rigid connection water sewer pressure rated cement lined asphaltic coating AWWA ANSI standard fitting pipe connection flange bolts rubber gaskets traceability hydrostatic testing"
+                }
+            },
+            {
+                "id": "c110-ductile-iron-pushon",
+                "product_code": "C110",
+                "title": "C110 Ductile Iron Push-On Fittings",
+                "joint_type": "Push-On Joint (TYTON JOINT®)",
+                "body_design": "Full Body",
+                "primary_standard": "ANSI/AWWA C110/A21.10",
+                "specifications": {
+                    "size_range": "4\" - 24\"",
+                    "material": {
+                        "type": "Ductile Iron",
+                        "standard": "ASTM A536",
+                        "grades": [
+                            "65-45-12",
+                            "60-42-10",
+                            "70-50-05"
+                        ]
+                    },
+                    "pressure_ratings": [
+                        {
+                            "sizes": "4\" - 24\"",
+                            "psi": 350
+                        }
+                    ],
+                    "deflection_limits": [
+                        {
+                            "sizes": "All sizes",
+                            "max_degrees": 5,
+                            "note": "Per TYTON JOINT bell design"
+                        }
+                    ]
+                },
+                "construction": {
+                    "lining": "Double cement-lined per ANSI/AWWA C104/A21.4",
+                    "coating": {
+                        "interior": "Asphaltic seal coat per ANSI AWWA C104/A21.4 (NSF61)",
+                        "exterior": "Asphaltic seal coat per ANSI/AWWA C110/A21.10 (NSF61)"
+                    },
+                    "gaskets": {
+                        "standard": "Dual hardness SBR",
+                        "optional": [],
+                        "standard_ref": "ANSI/AWWA C111/A21.11"
+                    },
+                    "joint_details": {
+                        "type": "TYTON JOINT® push-on bell joint",
+                        "licensing": "Manufactured under license"
+                    }
+                },
+                "testing": {
+                    "hydrostatic_testing": true,
+                    "heat_coded_traceability": true,
+                    "standards": [
+                        "ANSI/AWWA C110/A21.10",
+                        "UL-FM requirements"
+                    ]
+                },
+                "certifications": {
+                    "nsf61": true,
+                    "nsf61_annex_g": true,
+                    "nsf372": true,
+                    "ul_listed": "4\" - 12\"",
+                    "fm_approved": "4\" - 12\""
+                },
+                "installation": {
+                    "standards": [
+                        "ANSI/AWWA C600",
+                        "ANSI/AWWA C111"
+                    ],
+                    "compatible_pipes": [
+                        "DIP (C150/C151)",
+                        "PVC (C900/C905, C909)"
+                    ],
+                    "special_notes": "Push-on installation with TYTON JOINT technology."
+                },
+                "metadata": {
+                    "source_document": "C110_Ductile_Iron_PushOn_Fittings_Summary.txt",
+                    "revision_date": "April 2025",
+                    "category": "Pipe Fittings",
+                    "subcategory": "Ductile Iron Fittings",
+                    "keywords": [
+                        "C110",
+                        "push-on joint",
+                        "TYTON JOINT",
+                        "full body",
+                        "ductile iron",
+                        "water fittings",
+                        "sewer fittings",
+                        "AWWA",
+                        "pressure fitting",
+                        "cement lined",
+                        "asphaltic coating",
+                        "dual hardness",
+                        "SBR gaskets"
+                    ],
+                    "search_text": "C110 ductile iron push-on fittings TYTON JOINT full body water sewer pressure rated cement lined asphaltic coating deflection allowable AWWA ANSI standard fitting pipe connection dual hardness SBR gaskets bell joint traceability hydrostatic testing"
+                }
+            },
+            {
+                "id": "c153-ductile-iron-pushon",
+                "product_code": "C153",
+                "title": "C153 Ductile Iron Push-On Fittings",
+                "joint_type": "Push-On Joint (TYTON JOINT®)",
+                "body_design": "Compact/Short Body",
+                "primary_standard": "ANSI/AWWA C153/A21.53",
+                "specifications": {
+                    "size_range": "4\" - 24\"",
+                    "material": {
+                        "type": "Ductile Iron",
+                        "standard": "ASTM A536",
+                        "grades": [
+                            "65-45-12",
+                            "60-42-10",
+                            "70-50-05"
+                        ]
+                    },
+                    "pressure_ratings": [
+                        {
+                            "sizes": "4\" - 24\"",
+                            "psi": 350
+                        }
+                    ],
+                    "deflection_limits": [
+                        {
+                            "sizes": "All sizes",
+                            "max_degrees": 5,
+                            "note": "Per TYTON JOINT bell design"
+                        }
+                    ]
+                },
+                "construction": {
+                    "lining": "Double cement-lined per ANSI/AWWA C104/A21.4",
+                    "coating": {
+                        "interior": "Asphaltic seal coat per ANSI AWWA C104/A21.4 (NSF61)",
+                        "exterior": "Asphaltic seal coat per ANSI/AWWA C153/A21.53 (NSF61)"
+                    },
+                    "gaskets": {
+                        "standard": "Dual hardness SBR",
+                        "optional": [],
+                        "standard_ref": "ANSI/AWWA C111/A21.11"
+                    },
+                    "joint_details": {
+                        "type": "TYTON JOINT® push-on bell joint",
+                        "licensing": "Licensed from U.S. Pipe and Foundry Company"
+                    }
+                },
+                "testing": {
+                    "hydrostatic_testing": true,
+                    "heat_coded_traceability": true,
+                    "standards": [
+                        "ANSI/AWWA C153/A21.53",
+                        "UL-FM requirements"
+                    ]
+                },
+                "certifications": {
+                    "nsf61": true,
+                    "nsf61_annex_g": true,
+                    "nsf372": true,
+                    "ul_listed": "4\" - 12\"",
+                    "fm_approved": "4\" - 12\""
+                },
+                "installation": {
+                    "standards": [
+                        "ANSI/AWWA C600",
+                        "ANSI/AWWA C111"
+                    ],
+                    "compatible_pipes": [
+                        "DIP (C150/C151)",
+                        "PVC (C900/C905, C909)"
+                    ],
+                    "special_notes": "Compact design with push-on installation using TYTON JOINT technology."
+                },
+                "metadata": {
+                    "source_document": "C153_Ductile_Iron_PushOn_Fittings_Summary.txt",
+                    "revision_date": "April 2025",
+                    "category": "Pipe Fittings",
+                    "subcategory": "Ductile Iron Fittings",
+                    "keywords": [
+                        "C153",
+                        "push-on joint",
+                        "TYTON JOINT",
+                        "compact",
+                        "short body",
+                        "ductile iron",
+                        "water fittings",
+                        "sewer fittings",
+                        "AWWA",
+                        "pressure fitting",
+                        "cement lined",
+                        "asphaltic coating",
+                        "dual hardness",
+                        "SBR gaskets"
+                    ],
+                    "search_text": "C153 ductile iron push-on fittings TYTON JOINT compact short body water sewer pressure rated cement lined asphaltic coating deflection allowable AWWA ANSI standard fitting pipe connection dual hardness SBR gaskets bell joint traceability hydrostatic testing"
+                }
+            }
+        ]
+    }
+}
