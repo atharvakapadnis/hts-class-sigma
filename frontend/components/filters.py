@@ -119,7 +119,7 @@ def advanced_filters_sidebar():
 
 def quick_filters():
     """Quick filter buttons for common searches"""
-    st.markdown("###Quick Filters")
+    st.markdown("### Quick Filters")
     
     col1, col2, col3, col4 = st.columns(4)
     
