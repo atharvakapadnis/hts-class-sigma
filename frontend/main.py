@@ -178,25 +178,48 @@ def home_page():
         st.rerun()
 
     if products_result["success"]:
-        st.markdown("---")
-        st.markdown("### Featured Products")
-        for product in products[:3]:
-            col1, col2 = st.columns([3, 1])
-            with col1:
-                st.markdown(f"""
-                <div style="background-color: #1e1e1e; padding: 15px; border-radius: 10px; border-left: 4px solid #ff4b4b;">
-                    <h4 style="color: #ffffff; margin-top: 0;">{product['title']}</h4>
-                    <p style="color: #cccccc;">
-                        <strong>Code:</strong> {product['product_code']} |
-                        <strong>Joint:</strong> {product['joint_type']} |
-                        <strong>Size:</strong> {product['specifications']['size_range']}
-                    </p>
-                </div>
-                """, unsafe_allow_html=True)
-            with col2:
-                if st.button("View Details", key=f"featured_{product['id']}"):
-                    st.session_state.selected_product = product['id']
-                    st.rerun()
+        st.divider()
+        st.subheader("Featured Products")
+        
+        # Show first 3 products as featured in cards
+        featured_products = products[:3]
+        
+        # Create columns for card layout
+        cols = st.columns(len(featured_products))
+        
+        for idx, product in enumerate(featured_products):
+            with cols[idx]:
+                # Create a card using st.container with border
+                with st.container(border=True):
+                    st.markdown(f"##### {product['title']}")
+                    
+                    # Product details in organized format
+                    st.markdown(f"""
+                    **Product Code:** `{product['product_code']}`  
+                    **Joint Type:** {product['joint_type']}  
+                    **Body Design:** {product['body_design']}  
+                    **Size Range:** {product['specifications']['size_range']}  
+                    **Standard:** {product['primary_standard']}
+                    """)
+                    
+                    # Pressure ratings summary
+                    pressure_ratings = product['specifications']['pressure_ratings']
+                    if pressure_ratings:
+                        max_pressure = max([pr['psi'] for pr in pressure_ratings])
+                        st.metric("Max Pressure", f"{max_pressure} PSI")
+                    
+                    # Action buttons
+                    col_btn1, col_btn2 = st.columns(2)
+                    
+                    with col_btn1:
+                        if st.button("Details", key=f"featured_details_{product['id']}", use_container_width=True):
+                            st.session_state.selected_product = product['id']
+                            st.rerun()
+                    
+                    with col_btn2:
+                        if st.button("HTS", key=f"featured_hts_{product['id']}", use_container_width=True):
+                            st.session_state.show_hts = product['id']
+                            st.rerun()
 
 
 def news_placeholder():
