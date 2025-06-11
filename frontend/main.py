@@ -13,14 +13,12 @@ from components.products import product_catalog, product_detail_view, product_co
 from components.filters import quick_filters, advanced_filters_sidebar
 from components.hts_codes import hts_codes_interface, hts_product_view, bulk_hts_interface
 from services.api_client import get_api_client
-from utils.helpers import apply_dark_theme, display_api_error
+from utils.helpers import display_api_error
 from config.settings import settings
 
 # Page configuration
 st.set_page_config(**settings.PAGE_CONFIG)
 
-# Apply dark theme
-apply_dark_theme()
 
 def main():
     """Main application function"""

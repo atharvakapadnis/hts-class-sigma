@@ -160,69 +160,6 @@ def search_result_display(result: Dict[str, Any]) -> None:
         """, unsafe_allow_html=True)
 
 
-def apply_dark_theme():
-    """Apply dark theme CSS"""
-    st.markdown("""
-    <style>
-    .stApp {
-        background-color: #0e1117;
-        color: #ffffff;
-    }
-    
-    .stSidebar {
-        background-color: #1e1e1e;
-    }
-    
-    .stSelectbox > div > div {
-        background-color: #2d2d2d;
-        color: #ffffff;
-    }
-    
-    .stTextInput > div > div > input {
-        background-color: #2d2d2d;
-        color: #ffffff;
-        border: 1px solid #404040;
-    }
-    
-    .stButton > button {
-        background-color: #ff4b4b;
-        color: #ffffff;
-        border: none;
-        border-radius: 5px;
-    }
-    
-    .stButton > button:hover {
-        background-color: #ff6b6b;
-    }
-    
-    .stDataFrame {
-        background-color: #1e1e1e;
-    }
-    
-    .stExpander {
-        background-color: #1e1e1e;
-        border: 1px solid #404040;
-    }
-    
-    .stAlert {
-        background-color: #2d2d2d;
-        border: 1px solid #404040;
-    }
-    
-    h1, h2, h3 {
-        color: #ffffff;
-    }
-    
-    .highlight {
-        background-color: #ff4b4b;
-        color: #ffffff;
-        padding: 2px 6px;
-        border-radius: 3px;
-    }
-    </style>
-    """, unsafe_allow_html=True)
-
-
 def show_loading():
     """Show loading spinner"""
     return st.spinner("Loading...")
