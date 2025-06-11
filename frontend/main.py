@@ -28,26 +28,37 @@ def main():
     # Header
     st.markdown("""
     <div style="text-align: center; padding: 20px 0; margin-bottom: 30px;">
-       <h1 style="color: #ffffff; font-size: 3em; margin: 0;">
-           SIGMA Product Catalog
-       </h1>
-       <p style="color: #cccccc; font-size: 1.2em; margin: 10px 0;">
-           Ductile Iron Fittings with AI-Powered Search & HTS Code Generation
-       </p>
-   </div>
-   """, unsafe_allow_html=True)
+        <h1 style="color: #ffffff; font-size: 3em; margin: 0;">
+            SIGMA Product Catalog
+        </h1>
+        <p style="color: #cccccc; font-size: 1.2em; margin: 10px 0;">
+            Ductile Iron Fittings with AI-Powered Search & HTS Code Generation
+        </p>
+    </div>
+    """, unsafe_allow_html=True)
 
-    # Check API connectivity
     check_api_connection()
 
-    # Navigation menu
+    if "current_page" not in st.session_state:
+        st.session_state.current_page = "Home"
+
+    menu_options = ["Home", "Search", "Catalog", "Compare", "HTS Codes", "Bulk HTS"]
+    icons = ["house", "search", "grid", "arrow-repeat", "tags", "collection"]
+
+    try:
+        current_index = menu_options.index(st.session_state.current_page)
+    except ValueError:
+        current_index = 0
+        st.session_state.current_page = "Home"
+
     selected = option_menu(
         menu_title=None,
-        options=["Home", "Search", "Catalog", "Compare", "HTS Codes", "Bulk HTS"],
-        icons=["house", "search", "grid", "arrow-repeat", "tags", "collection"],
+        options=menu_options,
+        icons=icons,
         menu_icon="cast",
-        default_index=0,
+        default_index=current_index,
         orientation="horizontal",
+        key="main_menu",
         styles={
             "container": {"padding": "0!important", "background-color": "#1e1e1e"},
             "icon": {"color": "#ffffff", "font-size": "18px"},
@@ -63,7 +74,11 @@ def main():
         }
     )
 
-    # Special states
+    if selected != st.session_state.current_page:
+        clear_navigation_states()
+        st.session_state.current_page = selected
+        st.rerun()
+
     if "selected_product" in st.session_state:
         product_detail_view(st.session_state.selected_product)
         return
@@ -79,19 +94,28 @@ def main():
         show_similar_products(st.session_state.show_similar)
         return
 
-    # Navigation options
-    if selected == "Home":
+    current_page = st.session_state.current_page
+
+    if current_page == "Home":
         home_page()
-    elif selected == "Search":
+    elif current_page == "Search":
         search_interface()
-    elif selected == "Catalog":
+    elif current_page == "Catalog":
         product_catalog()
-    elif selected == "Compare":
+    elif current_page == "Compare":
         product_comparison()
-    elif selected == "HTS Codes":
+    elif current_page == "HTS Codes":
         hts_codes_interface()
-    elif selected == "Bulk HTS":
+    elif current_page == "Bulk HTS":
         bulk_hts_interface()
+
+
+def clear_navigation_states():
+    """Clear navigation-related session states"""
+    states_to_clear = ["selected_product", "show_hts", "show_similar", "quick_filters"]
+    for state in states_to_clear:
+        if state in st.session_state:
+            del st.session_state[state]
 
 
 def home_page():
@@ -126,26 +150,24 @@ def home_page():
         with col4:
             st.metric("AI Features", "3")
 
-    # Quick actions
     st.markdown("### Quick Actions")
     col1, col2, col3 = st.columns(3)
 
     with col1:
         if st.button("Start Smart Search", use_container_width=True):
-            st.session_state.selected_tab = "Search"
+            st.session_state.current_page = "Search"
             st.rerun()
 
     with col2:
         if st.button("Browse Catalog", use_container_width=True):
-            st.session_state.selected_tab = "Catalog"
+            st.session_state.current_page = "Catalog"
             st.rerun()
 
     with col3:
         if st.button("Generate HTS Codes", use_container_width=True):
-            st.session_state.selected_tab = "HTS Codes"
+            st.session_state.current_page = "HTS Codes"
             st.rerun()
 
-    # News & filters
     st.markdown("---")
     st.markdown("### News & Updates")
     news_placeholder()
@@ -154,7 +176,7 @@ def home_page():
     quick_filter_result = quick_filters()
     if quick_filter_result:
         st.session_state.quick_filters = quick_filter_result
-        st.session_state.selected_tab = "Search"
+        st.session_state.current_page = "Search"
         st.rerun()
 
     if products_result["success"]:
@@ -184,7 +206,9 @@ def news_placeholder():
     st.markdown("""
     <div style="background-color: #2d2d2d; padding: 20px; border-radius: 10px; border: 2px dashed #404040;">
         <h4 style="color: #ffffff; text-align: center; margin-top: 0;">News Feed Coming Soon</h4>
-        <p style="color: #cccccc; text-align: center;">This section will feature:</p>
+        <p style="color: #cccccc; text-align: center;">
+            This section will feature:
+        </p>
         <ul style="color: #cccccc; text-align: left; max-width: 500px; margin: 0 auto;">
             <li>Product updates and releases</li>
             <li>Industry news and standards updates</li>
@@ -204,8 +228,8 @@ def show_similar_products(product_id: str):
     if product_result["success"]:
         product = product_result["data"]
         st.markdown(f"### Similar to: {product['title']}")
-
         similar_result = api_client.get_similar_products(product_id, limit=5)
+
         if similar_result["success"]:
             data = similar_result["data"]
             if data["similar_products"]:
