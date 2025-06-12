@@ -10,7 +10,7 @@ from utils.helpers import display_api_error
 
 def advanced_filters_sidebar():
     """Advanced filtering sidebar"""
-    st.sidebar.markdown("##Advanced Filters")
+    st.sidebar.markdown("## Advanced Filters")
     
     api_client = get_api_client()
     filter_options = api_client.get_filter_options()
@@ -118,65 +118,80 @@ def advanced_filters_sidebar():
 
 
 def quick_filters():
-    """Quick filter buttons for common searches"""
+    """Improved quick filter buttons for common searches"""
     st.markdown("### Quick Filters")
+    st.caption("Click any filter to quickly search for common product types")
     
+    # First row - Joint Types
+    st.markdown("**Joint Types:**")
     col1, col2, col3, col4 = st.columns(4)
     
     with col1:
-        if st.button("Mechanical Joint", use_container_width=True):
+        if st.button("Mechanical Joint", use_container_width=True, key="qf_mech"):
             return {"joint_type": "Mechanical Joint"}
     
     with col2:
-        if st.button("Push-On Joint", use_container_width=True):
+        if st.button("Push-On Joint", use_container_width=True, key="qf_push"):
             return {"joint_type": "Push-On Joint"}
     
     with col3:
-        if st.button("Flanged Joint", use_container_width=True):
+        if st.button("Flanged Joint", use_container_width=True, key="qf_flange"):
             return {"joint_type": "Flanged Joint"}
     
     with col4:
-        if st.button("High Pressure", use_container_width=True):
+        if st.button("High Pressure", use_container_width=True, key="qf_pressure"):
             return {"min_pressure": 300}
     
-    # Second row
+    # Second row - Design Types
+    st.markdown("**Design Types:**")
     col1, col2, col3, col4 = st.columns(4)
     
     with col1:
-        if st.button("Compact Design", use_container_width=True):
+        if st.button("Compact Design", use_container_width=True, key="qf_compact"):
             return {"body_design": "Compact/Short Body"}
     
     with col2:
-        if st.button("Full Body", use_container_width=True):
+        if st.button("Full Body", use_container_width=True, key="qf_full"):
             return {"body_design": "Full Body"}
     
     with col3:
-        if st.button("C153 Series", use_container_width=True):
+        if st.button("C153 Series", use_container_width=True, key="qf_c153"):
             return {"product_code": "C153"}
     
     with col4:
-        if st.button("C110 Series", use_container_width=True):
+        if st.button("C110 Series", use_container_width=True, key="qf_c110"):
             return {"product_code": "C110"}
     
     return {}
 
 
 def filter_results_display(filters: Dict[str, Any], total_results: int):
-    """Display active filters and results count"""
+    """Display active filters and results count in compact format"""
     if not filters:
         return
     
-    st.markdown("###Active Filters")
+    st.markdown("### Active Filters")
     
-    filter_cols = st.columns(min(len(filters), 4))
+    # Display filters in a more compact way
+    filter_items = []
+    for key, value in filters.items():
+        if isinstance(value, list):
+            filter_items.append(f"**{key.replace('_', ' ').title()}:** {', '.join(value)}")
+        elif isinstance(value, dict):
+            filter_items.append(f"**{key.replace('_', ' ').title()}:** Multiple criteria")
+        else:
+            filter_items.append(f"**{key.replace('_', ' ').title()}:** {value}")
     
-    for i, (key, value) in enumerate(filters.items()):
-        with filter_cols[i % 4]:
-            if isinstance(value, list):
-                st.info(f"**{key.replace('_', ' ').title()}:** {', '.join(value)}")
-            elif isinstance(value, dict):
-                st.info(f"**{key.replace('_', ' ').title()}:** Multiple")
-            else:
-                st.info(f"**{key.replace('_', ' ').title()}:** {value}")
+    # Display in columns if we have multiple filters
+    if len(filter_items) <= 2:
+        cols = st.columns(len(filter_items))
+        for i, item in enumerate(filter_items):
+            with cols[i]:
+                st.info(item)
+    else:
+        cols = st.columns(2)
+        for i, item in enumerate(filter_items):
+            with cols[i % 2]:
+                st.info(item)
     
     st.success(f"Found {total_results} products matching your filters")

@@ -82,7 +82,7 @@ def main():
     if current_page == "Home":
         home_page()
     elif current_page == "Search":
-        tabbed_search_page()  # Updated to use tabbed search
+        tabbed_search_page()
     elif current_page == "Catalog":
         product_catalog()
     elif current_page == "Compare":
@@ -101,7 +101,10 @@ def clear_navigation_states():
         "show_similar",
         "quick_filters",
         "ai_query_tab",
-        "basic_search_input"
+        "basic_search_input",
+        "show_filters",
+        "show_suggestions",
+        "show_examples"
     ]
     
     for state in states_to_clear:
@@ -185,7 +188,7 @@ def home_page():
         st.session_state.current_page = "Search"
         st.rerun()
     
-    # Featured products - CARD LAYOUT WITH BORDERS
+    # Featured products
     if products_result["success"]:
         st.divider()
         st.subheader("Featured Products")
