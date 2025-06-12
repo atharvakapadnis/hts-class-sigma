@@ -46,25 +46,12 @@ def create_product_card(product: Dict[str, Any]) -> None:
     """Create a product card display"""
     with st.container():
         st.markdown(f"""
-        <div style="
-            background-color: #1e1e1e;
-            padding: 20px;
-            border-radius: 10px;
-            border-left: 4px solid #ff4b4b;
-            margin-bottom: 15px;
-        ">
-            <h3 style="color: #ffffff; margin-top: 0;">{product['title']}</h3>
-            <p style="color: #cccccc;">
-                <strong>Code:</strong> {product['product_code']} | 
-                <strong>Joint:</strong> {product['joint_type']} | 
-                <strong>Design:</strong> {product['body_design']}
-            </p>
-            <p style="color: #cccccc;">
-                <strong>Size Range:</strong> {product['specifications']['size_range']} | 
-                <strong>Standard:</strong> {product['primary_standard']}
-            </p>
-        </div>
-        """, unsafe_allow_html=True)
+        ### {product['title']}
+        
+        **Code:** {product['product_code']} | **Joint:** {product['joint_type']} | **Design:** {product['body_design']}
+        
+        **Size Range:** {product['specifications']['size_range']} | **Standard:** {product['primary_standard']}
+        """)
 
 
 def create_specifications_table(product: Dict[str, Any]) -> pd.DataFrame:
@@ -104,60 +91,26 @@ def create_hts_display(suggestions: List[Dict[str, Any]]) -> None:
         return
     
     for i, suggestion in enumerate(suggestions, 1):
-        confidence_color = "#00ff00" if suggestion['confidence'] > 0.8 else "#ffff00" if suggestion['confidence'] > 0.6 else "#ff8800"
+        confidence_level = "High" if suggestion['confidence'] > 0.8 else "Medium" if suggestion['confidence'] > 0.6 else "Low"
         
-        st.markdown(f"""
-        <div style="
-            background-color: #2d2d2d;
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 10px;
-            border-left: 3px solid {confidence_color};
-        ">
-            <h4 style="color: #ffffff; margin-top: 0;">#{i} - {suggestion['code']}</h4>
-            <p style="color: #cccccc;">{suggestion['description']}</p>
-            <p style="color: {confidence_color};">
-                <strong>Confidence:</strong> {suggestion['confidence']:.1%}
-            </p>
-            <p style="color: #aaaaaa; font-size: 0.9em;">
-                <strong>Reasoning:</strong> {suggestion.get('reasoning', 'No reasoning provided')}
-            </p>
-        </div>
-        """, unsafe_allow_html=True)
+        with st.expander(f"#{i} - {suggestion['code']} ({confidence_level} Confidence)"):
+            st.write(f"**Description:** {suggestion['description']}")
+            st.write(f"**Confidence:** {suggestion['confidence']:.1%}")
+            st.write(f"**Reasoning:** {suggestion.get('reasoning', 'No reasoning provided')}")
 
 
 def search_result_display(result: Dict[str, Any]) -> None:
-    """Display search result with score"""
+    """Display search result with score - FIXED VERSION"""
     product = result['product']
     score = result.get('score', 0)
     match_reason = result.get('match_reason', 'No match reason')
     
-    score_color = "#00ff00" if score > 80 else "#ffff00" if score > 60 else "#ff8800"
+    # Display product card
+    create_product_card(product)
     
-    col1, col2 = st.columns([4, 1])
-    
-    with col1:
-        create_product_card(product)
-    
-    with col2:
-        st.markdown(f"""
-        <div style="text-align: center; padding: 20px;">
-            <div style="
-                background-color: {score_color};
-                color: #000000;
-                padding: 10px;
-                border-radius: 50%;
-                font-weight: bold;
-                font-size: 1.2em;
-                margin-bottom: 10px;
-            ">
-                {score:.0f}
-            </div>
-            <p style="color: #cccccc; font-size: 0.8em;">
-                {match_reason}
-            </p>
-        </div>
-        """, unsafe_allow_html=True)
+    # Display match information below the card
+    if score:
+        st.caption(f"**Match Score:** {score:.0f} | **Reason:** {match_reason}")
 
 
 def show_loading():
