@@ -11,10 +11,9 @@ from utils.helpers import display_api_error, search_result_display, show_loading
 def tabbed_search_page():
     """Tabbed search interface with Basic and AI options"""
     st.title("Product Search")
-    st.write("Choose between basic keyword search or AI-powered natural language search.")
     
-    # Create tabs
-    tab1, tab2 = st.tabs(["**Basic Search**", "**AI Search**"])
+    # Create tabs with cleaner styling
+    tab1, tab2 = st.tabs(["Basic Search", "AI Search"])
     
     with tab1:
         basic_search_tab()
@@ -25,42 +24,59 @@ def tabbed_search_page():
 
 def basic_search_tab():
     """Basic keyword search tab"""
-    st.markdown("### Keyword & Filter Search")
-    st.write("Search using specific keywords, product codes, and filters.")
+    st.markdown("Search using keywords, product codes, and filters")
     
-    # Search input
-    search_query = st.text_input(
-        "Search products...",
-        placeholder="e.g., C153, mechanical joint, ductile iron, 350 PSI",
-        help="Search by product code, joint type, material, pressure rating, or other specifications",
-        key="basic_search_input"
-    )
-    
-    # Filters
-    with st.expander("Search Filters", expanded=False):
-        filter_options = get_filter_options()
-        filters = create_filter_interface(filter_options, key_prefix="basic")
-    
-    # Search controls
-    col1, col2, col3 = st.columns([2, 1, 1])
+    # Main search section
+    col1, col2, col3 = st.columns([4, 1, 1])
     
     with col1:
-        results_limit = st.slider("Max Results", min_value=5, max_value=50, value=15, key="basic_limit")
+        search_query = st.text_input(
+            "Search products",
+            placeholder="Enter product code, joint type, material, etc.",
+            key="basic_search_input",
+            label_visibility="collapsed"
+        )
     
     with col2:
-        if st.button("Search", type="primary", use_container_width=True, key="basic_search_btn"):
-            if search_query:
-                perform_basic_search(search_query, filters, results_limit)
-            else:
-                st.warning("Please enter a search query")
+        search_button = st.button("Search", type="primary", use_container_width=True, key="basic_search_btn")
     
     with col3:
-        if st.button("Clear", use_container_width=True, key="basic_clear"):
+        clear_button = st.button("Clear", use_container_width=True, key="basic_clear")
+        if clear_button:
             st.rerun()
     
-    # Search suggestions for basic search
-    if search_query and len(search_query) >= 2:
-        show_search_suggestions(search_query, "basic")
+    # Compact controls row
+    col1, col2, col3 = st.columns([2, 2, 2])
+    
+    with col1:
+        results_limit = st.selectbox("Results", [10, 15, 25, 50], index=1, key="basic_limit")
+    
+    with col2:
+        if st.button("Advanced Filters", use_container_width=True):
+            st.session_state.show_filters = not st.session_state.get("show_filters", False)
+    
+    with col3:
+        if search_query and len(search_query) >= 2:
+            if st.button("Show Suggestions", use_container_width=True):
+                st.session_state.show_suggestions = not st.session_state.get("show_suggestions", False)
+    
+    # Advanced filters in collapsible section
+    if st.session_state.get("show_filters", False):
+        with st.expander("Advanced Filters", expanded=True):
+            filter_options = get_filter_options()
+            filters = create_filter_interface(filter_options, key_prefix="basic")
+    else:
+        filters = {}
+    
+    # Compact suggestions display
+    if st.session_state.get("show_suggestions", False) and search_query and len(search_query) >= 2:
+        show_compact_suggestions(search_query, "basic")
+    
+    # Search execution
+    if search_button and search_query:
+        perform_basic_search(search_query, filters, results_limit)
+    elif search_button and not search_query:
+        st.warning("Please enter a search query")
     
     # Popular searches when no query
     if not search_query:
@@ -69,74 +85,87 @@ def basic_search_tab():
 
 def ai_search_tab():
     """AI-powered natural language search tab"""
-    st.markdown("### Natural Language Search")
-    st.write("Ask questions about products in natural language. The AI will understand your intent and find relevant products.")
+    st.markdown("Ask questions about products in natural language")
     
-    # Example queries in a more compact format
-    with st.expander("Example Questions", expanded=True):
-        st.markdown("**Try asking questions like:**")
-        
-        example_questions = [
-            "What products have push-on fittings?",
-            "Show me compact fittings for high pressure applications",
-            "Which fittings are suitable for 6 inch pipes?",
-            "Find mechanical joint fittings with NSF certification",
-            "What C153 products support deflection?",
-            "Show me full body designs for water applications"
-        ]
-        
-        # Display example questions as clickable buttons
-        example_cols = st.columns(2)
-        
-        for i, question in enumerate(example_questions):
-            with example_cols[i % 2]:
-                if st.button(f"{question}", key=f"example_{i}", use_container_width=True):
-                    st.session_state.ai_query_tab = question
-                    st.rerun()
-    
-    # AI search input
-    ai_query = st.text_area(
-        "Ask your question:",
-        value=st.session_state.get("ai_query_tab", ""),
-        placeholder="Type your question in natural language...\n\nFor example:\n- What products have push-on fittings?\n- Show me high pressure fittings for 6 inch pipes\n- Find compact mechanical joint fittings",
-        help="Describe what you're looking for in your own words. The AI will interpret your question and find relevant products.",
-        height=120,
-        key="ai_search_input"
-    )
-    
-    # AI search controls
-    col1, col2, col3 = st.columns([2, 1, 1])
+    # Main search section
+    col1, col2, col3 = st.columns([4, 1, 1])
     
     with col1:
-        results_limit = st.slider("Max Results", min_value=5, max_value=20, value=10, key="ai_limit")
+        ai_query = st.text_area(
+            "Ask your question",
+            value=st.session_state.get("ai_query_tab", ""),
+            placeholder="What products have push-on fittings for 6 inch pipes?",
+            height=80,
+            key="ai_search_input",
+            label_visibility="collapsed"
+        )
     
     with col2:
-        if st.button("Ask AI", type="primary", use_container_width=True, key="ai_search_btn"):
-            if ai_query:
-                perform_ai_search(ai_query, results_limit)
-            else:
-                st.warning("Please enter your question")
+        search_button = st.button("Ask AI", type="primary", use_container_width=True, key="ai_search_btn")
+        if st.button("Examples", use_container_width=True):
+            st.session_state.show_examples = not st.session_state.get("show_examples", False)
     
     with col3:
-        if st.button("Clear", use_container_width=True, key="ai_clear"):
+        results_limit = st.selectbox("Results", [5, 10, 15, 20], index=1, key="ai_limit")
+        clear_button = st.button("Clear", use_container_width=True, key="ai_clear")
+        if clear_button:
             if "ai_query_tab" in st.session_state:
                 del st.session_state.ai_query_tab
             st.rerun()
     
-    # AI search tips when no query
+    # Compact examples display
+    if st.session_state.get("show_examples", False):
+        show_compact_examples()
+    
+    # Search execution
+    if search_button and ai_query:
+        perform_ai_search(ai_query, results_limit)
+    elif search_button and not ai_query:
+        st.warning("Please enter your question")
+    
+    # AI tips when no query
     if not ai_query:
-        st.info("""
-        **AI Search Tips:**
-        - Ask questions naturally, as you would to a person
-        - Be specific about what you need (size, pressure, application, etc.)
-        - Use product terminology when you know it
-        - The AI understands synonyms and related terms
+        st.info("Ask natural language questions like: 'What products work with 12 inch pipes?' or 'Show me high pressure fittings'")
+
+
+def show_compact_suggestions(query: str, search_type: str):
+    """Show search suggestions in compact format"""
+    api_client = get_api_client()
+    suggestions = api_client.get_search_suggestions(query, limit=5)
+    
+    if suggestions["success"] and suggestions["data"]["suggestions"]:
+        st.markdown("**Suggestions:**")
         
-        **Example queries:**
-        - "What products work with 12 inch pipes?"
-        - "Show me fittings rated for 350 PSI"
-        - "Find push-on joints for water applications"
-        """)
+        # Display suggestions in a horizontal layout
+        cols = st.columns(len(suggestions["data"]["suggestions"]))
+        
+        for i, suggestion in enumerate(suggestions["data"]["suggestions"]):
+            with cols[i]:
+                if st.button(f"`{suggestion}`", key=f"suggestion_{suggestion}_{i}_{search_type}", use_container_width=True):
+                    if search_type == "basic":
+                        perform_basic_search(suggestion, {}, 15)
+                    else:
+                        st.session_state.ai_query_tab = suggestion
+                        st.rerun()
+
+
+def show_compact_examples():
+    """Show AI examples in compact format"""
+    examples = [
+        "Push-on fittings for 6 inch pipes",
+        "High pressure mechanical joints",
+        "Compact design C153 products",
+        "Flanged fittings with NSF certification"
+    ]
+    
+    st.markdown("**Example Questions:**")
+    cols = st.columns(2)
+    
+    for i, example in enumerate(examples):
+        with cols[i % 2]:
+            if st.button(example, key=f"example_{i}", use_container_width=True):
+                st.session_state.ai_query_tab = example
+                st.rerun()
 
 
 def get_filter_options():
@@ -146,7 +175,7 @@ def get_filter_options():
 
 
 def create_filter_interface(filter_options, key_prefix=""):
-    """Create filter interface"""
+    """Create compact filter interface"""
     filters = {}
     
     if filter_options["success"]:
@@ -155,7 +184,6 @@ def create_filter_interface(filter_options, key_prefix=""):
         col1, col2, col3 = st.columns(3)
         
         with col1:
-            # Product Code filter
             if data.get("product_codes"):
                 selected_code = st.selectbox(
                     "Product Code",
@@ -165,7 +193,6 @@ def create_filter_interface(filter_options, key_prefix=""):
                 if selected_code != "All":
                     filters["product_code"] = selected_code
             
-            # Joint Type filter
             if data.get("joint_types"):
                 selected_joint = st.selectbox(
                     "Joint Type",
@@ -176,7 +203,6 @@ def create_filter_interface(filter_options, key_prefix=""):
                     filters["joint_type"] = selected_joint
         
         with col2:
-            # Body Design filter
             if data.get("body_designs"):
                 selected_design = st.selectbox(
                     "Body Design",
@@ -187,8 +213,7 @@ def create_filter_interface(filter_options, key_prefix=""):
                     filters["body_design"] = selected_design
         
         with col3:
-            # Pressure filters
-            st.write("**Pressure Range (PSI)**")
+            st.markdown("**Pressure (PSI)**")
             pressure_col1, pressure_col2 = st.columns(2)
             
             with pressure_col1:
@@ -214,12 +239,12 @@ def perform_basic_search(query: str, filters: dict, limit: int):
     with show_loading():
         search_result = api_client.search_products(
             query=query,
-            enhanced=False,  # Basic search only
+            enhanced=False,
             limit=limit,
             **filters
         )
     
-    display_search_results(search_result, f'Basic search for "{query}"', "basic")
+    display_search_results(search_result, f'Search results for "{query}"', "basic")
 
 
 def perform_ai_search(query: str, limit: int):
@@ -229,11 +254,11 @@ def perform_ai_search(query: str, limit: int):
     with show_loading():
         search_result = api_client.search_products(
             query=query,
-            enhanced=True,  # AI search
+            enhanced=True,
             limit=limit
         )
     
-    display_search_results(search_result, f'AI search for "{query}"', "ai")
+    display_search_results(search_result, f'AI search results for "{query}"', "ai")
 
 
 def display_search_results(search_result: dict, title: str, search_type: str):
@@ -242,13 +267,19 @@ def display_search_results(search_result: dict, title: str, search_type: str):
         data = search_result["data"]
         
         # Results header
-        st.success(f"{title}")
+        st.success(title)
         
-        # Show search time for basic search, not for AI (since it's processed differently)
-        if search_type == "basic":
-            st.info(f"Found **{data['total_results']}** products in {data.get('search_time_ms', 0)}ms")
-        else:
-            st.info(f"Found **{data['total_results']}** products using AI analysis")
+        # Compact results info
+        col1, col2 = st.columns([3, 1])
+        with col1:
+            if search_type == "basic":
+                st.info(f"Found {data['total_results']} products in {data.get('search_time_ms', 0)}ms")
+            else:
+                st.info(f"Found {data['total_results']} products using AI analysis")
+        
+        with col2:
+            if st.button("New Search"):
+                st.rerun()
         
         # Display results
         if data["results"]:
@@ -256,23 +287,28 @@ def display_search_results(search_result: dict, title: str, search_type: str):
             
             for i, result in enumerate(data["results"], 1):
                 with st.container(border=True):
-                    col1, col2 = st.columns([3, 1])
+                    # Product header
+                    col1, col2 = st.columns([4, 1])
                     
                     with col1:
-                        st.markdown(f"#### {i}. {result['product']['title']}")
-                        search_result_display(result)
+                        st.markdown(f"**{i}. {result['product']['title']}**")
+                        
+                        # Compact product info
+                        product = result['product']
+                        st.caption(f"Code: {product['product_code']} | Joint: {product['joint_type']} | Design: {product['body_design']}")
+                        st.caption(f"Size Range: {product['specifications']['size_range']} | Standard: {product['primary_standard']}")
+                        
+                        # Match score info
+                        if result.get('score'):
+                            st.caption(f"Match Score: {result['score']:.0f} | Reason: {result.get('match_reason', 'N/A')}")
                     
                     with col2:
-                        # Show match score if available
-                        if result.get('score'):
-                            st.metric("Match Score", f"{result['score']:.0f}", help=f"Match reason: {result.get('match_reason', 'N/A')}")
-                        
-                        # Action buttons
-                        if st.button("View Details", key=f"view_{result['product']['id']}_{i}_{search_type}", use_container_width=True):
+                        # Action buttons in vertical layout
+                        if st.button("Details", key=f"view_{result['product']['id']}_{i}_{search_type}", use_container_width=True):
                             st.session_state.selected_product = result['product']['id']
                             st.rerun()
                         
-                        if st.button("HTS Codes", key=f"hts_{result['product']['id']}_{i}_{search_type}", use_container_width=True):
+                        if st.button("HTS", key=f"hts_{result['product']['id']}_{i}_{search_type}", use_container_width=True):
                             st.session_state.show_hts = result['product']['id']
                             st.rerun()
                         
@@ -282,49 +318,16 @@ def display_search_results(search_result: dict, title: str, search_type: str):
         else:
             st.warning("No products found matching your search criteria.")
             
-            # Suggestions for no results
             if search_type == "basic":
-                st.info("""
-                **Try these tips:**
-                - Use different keywords
-                - Remove some filters
-                - Check spelling
-                - Try broader terms
-                """)
+                st.info("Try different keywords, remove filters, or check spelling")
             else:
-                st.info("""
-                **Try these tips:**
-                - Rephrase your question
-                - Be more specific about what you need
-                - Use different terminology
-                - Try the examples above
-                """)
+                st.info("Try rephrasing your question or being more specific")
     else:
         display_api_error(search_result["error"])
 
 
-def show_search_suggestions(query: str, search_type: str):
-    """Show search suggestions"""
-    api_client = get_api_client()
-    suggestions = api_client.get_search_suggestions(query, limit=5)
-    
-    if suggestions["success"] and suggestions["data"]["suggestions"]:
-        st.markdown("**Suggestions:**")
-        suggestion_cols = st.columns(min(len(suggestions["data"]["suggestions"]), 5))
-        
-        for i, suggestion in enumerate(suggestions["data"]["suggestions"]):
-            with suggestion_cols[i]:
-                if st.button(suggestion, key=f"suggestion_{suggestion}_{i}_{search_type}", use_container_width=True):
-                    # Trigger search with suggestion
-                    if search_type == "basic":
-                        perform_basic_search(suggestion, {}, 15)
-                    else:
-                        st.session_state.ai_query_tab = suggestion
-                        st.rerun()
-
-
 def show_popular_searches():
-    """Show popular searches for basic search"""
+    """Show popular searches in compact format"""
     st.markdown("### Popular Searches")
     
     popular_terms = [
@@ -332,12 +335,11 @@ def show_popular_searches():
         "high pressure", "ductile iron", "compact design"
     ]
     
-    cols = st.columns(min(len(popular_terms), 4))
+    cols = st.columns(4)
     
     for i, term in enumerate(popular_terms):
         with cols[i % 4]:
-            if st.button(f"{term}", key=f"popular_{term}", use_container_width=True):
-                # Perform search with popular term
+            if st.button(term, key=f"popular_{term}", use_container_width=True):
                 perform_basic_search(term, {}, 10)
 
 

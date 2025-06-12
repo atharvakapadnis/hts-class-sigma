@@ -43,15 +43,14 @@ def format_deflection_limits(deflection_limits: List[Dict]) -> str:
 
 
 def create_product_card(product: Dict[str, Any]) -> None:
-    """Create a product card display"""
-    with st.container():
-        st.markdown(f"""
-        ### {product['title']}
-        
-        **Code:** {product['product_code']} | **Joint:** {product['joint_type']} | **Design:** {product['body_design']}
-        
-        **Size Range:** {product['specifications']['size_range']} | **Standard:** {product['primary_standard']}
-        """)
+    """Create a compact product card display"""
+    st.markdown(f"""
+    **{product['title']}**
+    
+    Code: {product['product_code']} | Joint: {product['joint_type']} | Design: {product['body_design']}
+    
+    Size Range: {product['specifications']['size_range']} | Standard: {product['primary_standard']}
+    """)
 
 
 def create_specifications_table(product: Dict[str, Any]) -> pd.DataFrame:
@@ -100,17 +99,13 @@ def create_hts_display(suggestions: List[Dict[str, Any]]) -> None:
 
 
 def search_result_display(result: Dict[str, Any]) -> None:
-    """Display search result with score - FIXED VERSION"""
+    """Display compact search result"""
     product = result['product']
-    score = result.get('score', 0)
-    match_reason = result.get('match_reason', 'No match reason')
     
-    # Display product card
-    create_product_card(product)
-    
-    # Display match information below the card
-    if score:
-        st.caption(f"**Match Score:** {score:.0f} | **Reason:** {match_reason}")
+    # Compact product display
+    st.markdown(f"**{product['title']}**")
+    st.caption(f"Code: {product['product_code']} | Joint: {product['joint_type']} | Design: {product['body_design']}")
+    st.caption(f"Size Range: {product['specifications']['size_range']} | Standard: {product['primary_standard']}")
 
 
 def show_loading():
