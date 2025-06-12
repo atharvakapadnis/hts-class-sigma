@@ -8,7 +8,7 @@ from streamlit_option_menu import option_menu
 import time
 
 # Import components
-from components.search import search_interface
+from components.search import tabbed_search_page
 from components.products import product_catalog, product_detail_view, product_comparison
 from components.filters import quick_filters, advanced_filters_sidebar
 from components.hts_codes import hts_codes_interface, hts_product_view, bulk_hts_interface
@@ -19,36 +19,31 @@ from config.settings import settings
 # Page configuration
 st.set_page_config(**settings.PAGE_CONFIG)
 
-
 def main():
     """Main application function"""
-
+    
     # Header
-    st.markdown("""
-    <div style="text-align: center; padding: 20px 0; margin-bottom: 30px;">
-        <h1 style="color: #ffffff; font-size: 3em; margin: 0;">
-            SIGMA Product Catalog
-        </h1>
-        <p style="color: #cccccc; font-size: 1.2em; margin: 10px 0;">
-            Ductile Iron Fittings with AI-Powered Search & HTS Code Generation
-        </p>
-    </div>
-    """, unsafe_allow_html=True)
-
+    st.title("SIGMA Product Catalog")
+    st.caption("Ductile Iron Fittings with AI-Powered Search & HTS Code Generation")
+    
+    # Check API connectivity
     check_api_connection()
-
+    
+    # Initialize navigation state
     if "current_page" not in st.session_state:
         st.session_state.current_page = "Home"
-
+    
+    # Navigation menu with session state integration
     menu_options = ["Home", "Search", "Catalog", "Compare", "HTS Codes", "Bulk HTS"]
     icons = ["house", "search", "grid", "arrow-repeat", "tags", "collection"]
-
+    
+    # Get current index
     try:
         current_index = menu_options.index(st.session_state.current_page)
     except ValueError:
         current_index = 0
         st.session_state.current_page = "Home"
-
+    
     selected = option_menu(
         menu_title=None,
         options=menu_options,
@@ -57,47 +52,37 @@ def main():
         default_index=current_index,
         orientation="horizontal",
         key="main_menu",
-        styles={
-            "container": {"padding": "0!important", "background-color": "#1e1e1e"},
-            "icon": {"color": "#ffffff", "font-size": "18px"},
-            "nav-link": {
-                "font-size": "16px",
-                "text-align": "center",
-                "margin": "0px",
-                "padding": "10px",
-                "color": "#ffffff",
-                "--hover-color": "#2d2d2d"
-            },
-            "nav-link-selected": {"background-color": "#ff4b4b"},
-        }
     )
-
+    
+    # Update session state when menu selection changes
     if selected != st.session_state.current_page:
         clear_navigation_states()
         st.session_state.current_page = selected
         st.rerun()
-
+    
+    # Handle special states first (these override normal navigation)
     if "selected_product" in st.session_state:
         product_detail_view(st.session_state.selected_product)
         return
-
+    
     if "show_hts" in st.session_state:
         hts_product_view(st.session_state.show_hts)
-        if st.button("Back"):
+        if st.button("← Back"):
             del st.session_state.show_hts
             st.rerun()
         return
-
+    
     if "show_similar" in st.session_state:
         show_similar_products(st.session_state.show_similar)
         return
-
+    
+    # Main navigation based on session state
     current_page = st.session_state.current_page
-
+    
     if current_page == "Home":
         home_page()
     elif current_page == "Search":
-        search_interface()
+        tabbed_search_page()  # Updated to use tabbed search
     elif current_page == "Catalog":
         product_catalog()
     elif current_page == "Compare":
@@ -110,7 +95,15 @@ def main():
 
 def clear_navigation_states():
     """Clear navigation-related session states"""
-    states_to_clear = ["selected_product", "show_hts", "show_similar", "quick_filters"]
+    states_to_clear = [
+        "selected_product",
+        "show_hts", 
+        "show_similar",
+        "quick_filters",
+        "ai_query_tab",
+        "basic_search_input"
+    ]
+    
     for state in states_to_clear:
         if state in st.session_state:
             del st.session_state[state]
@@ -118,65 +111,81 @@ def clear_navigation_states():
 
 def home_page():
     """Home page with overview and quick actions"""
-
-    st.markdown("""
-    <div style="background-color: #1e1e1e; padding: 30px; border-radius: 15px; margin-bottom: 30px;">
-        <h2 style="color: #ffffff; text-align: center;">Welcome to SIGMA Product Catalog</h2>
-        <p style="color: #cccccc; text-align: center; font-size: 1.1em;">
-            Your comprehensive resource for ductile iron fittings with intelligent search capabilities
-        </p>
-    </div>
-    """, unsafe_allow_html=True)
-
+    
+    # Welcome section
+    st.header("Welcome to SIGMA Product Catalog")
+    st.write("Your comprehensive resource for ductile iron fittings with intelligent search capabilities")
+    
+    # Quick stats
     api_client = get_api_client()
     products_result = api_client.get_products()
-
+    
     if products_result["success"]:
         products = products_result["data"]
         total_products = len(products)
-
+        
+        # Calculate some basic stats
         joint_types = set(p['joint_type'] for p in products)
         product_codes = set(p['product_code'] for p in products)
-
+        
         col1, col2, col3, col4 = st.columns(4)
+        
         with col1:
-            st.metric("Total Products", total_products)
+            st.metric("Total Products", total_products, help="Complete product catalog size")
+        
         with col2:
-            st.metric("Joint Types", len(joint_types))
+            st.metric("Joint Types", len(joint_types), help="Available joint connection types")
+        
         with col3:
-            st.metric("Product Series", len(product_codes))
+            st.metric("Product Series", len(product_codes), help="Distinct product code series")
+        
         with col4:
-            st.metric("AI Features", "3")
-
-    st.markdown("### Quick Actions")
+            st.metric("AI Features", "3", help="Search, HTS Codes, Recommendations")
+    
+    # Quick actions
+    st.subheader("Quick Actions")
+    
     col1, col2, col3 = st.columns(3)
-
+    
     with col1:
-        if st.button("Start Smart Search", use_container_width=True):
+        if st.button("Start Smart Search", use_container_width=True, type="primary"):
             st.session_state.current_page = "Search"
             st.rerun()
-
+    
     with col2:
         if st.button("Browse Catalog", use_container_width=True):
             st.session_state.current_page = "Catalog"
             st.rerun()
-
+    
     with col3:
         if st.button("Generate HTS Codes", use_container_width=True):
             st.session_state.current_page = "HTS Codes"
             st.rerun()
-
-    st.markdown("---")
-    st.markdown("### News & Updates")
-    news_placeholder()
-
-    st.markdown("---")
+    
+    # News feed placeholder
+    st.divider()
+    st.subheader("News & Updates")
+    
+    st.info("""
+    **News Feed Coming Soon**
+    
+    This section will feature:
+    - Product updates and releases
+    - Industry news and standards updates  
+    - Technical bulletins and advisories
+    - Training and certification announcements
+    """)
+    
+    # Quick filters
+    st.divider()
     quick_filter_result = quick_filters()
+    
     if quick_filter_result:
         st.session_state.quick_filters = quick_filter_result
         st.session_state.current_page = "Search"
         st.rerun()
-
+    
+    # Featured products - CARD LAYOUT WITH BORDERS
     if products_result["success"]:
         st.divider()
         st.subheader("Featured Products")
@@ -222,71 +231,60 @@ def home_page():
                             st.rerun()
 
 
-def news_placeholder():
-    """News feed placeholder section"""
-    st.markdown("""
-    <div style="background-color: #2d2d2d; padding: 20px; border-radius: 10px; border: 2px dashed #404040;">
-        <h4 style="color: #ffffff; text-align: center; margin-top: 0;">News Feed Coming Soon</h4>
-        <p style="color: #cccccc; text-align: center;">
-            This section will feature:
-        </p>
-        <ul style="color: #cccccc; text-align: left; max-width: 500px; margin: 0 auto;">
-            <li>Product updates and releases</li>
-            <li>Industry news and standards updates</li>
-            <li>Technical bulletins and advisories</li>
-            <li>Training and certification announcements</li>
-        </ul>
-    </div>
-    """, unsafe_allow_html=True)
-
-
 def show_similar_products(product_id: str):
     """Show similar products interface"""
     st.title("Similar Products")
+    
     api_client = get_api_client()
+    
+    # Get the reference product
     product_result = api_client.get_product(product_id)
-
+    
     if product_result["success"]:
         product = product_result["data"]
-        st.markdown(f"### Similar to: {product['title']}")
+        
+        st.subheader(f"Similar to: {product['title']}")
+        
+        # Get similar products
         similar_result = api_client.get_similar_products(product_id, limit=5)
-
+        
         if similar_result["success"]:
             data = similar_result["data"]
+            
             if data["similar_products"]:
                 st.success(f"Found {len(data['similar_products'])} similar products")
+                
+                # Show similarity criteria
                 st.info(f"Similarity based on: {', '.join(data['similarity_criteria'])}")
+                
+                # Display similar products
                 for result in data["similar_products"]:
                     similar_product = result["product"]
+                    
                     col1, col2 = st.columns([4, 1])
+                    
                     with col1:
-                        st.markdown(f"""
-                        <div style="background-color: #1e1e1e; padding: 15px; border-radius: 10px; border-left: 4px solid #4bb543;">
-                            <h4 style="color: #ffffff; margin-top: 0;">{similar_product['title']}</h4>
-                            <p style="color: #cccccc;">
-                                <strong>Code:</strong> {similar_product['product_code']} |
-                                <strong>Joint:</strong> {similar_product['joint_type']} |
-                                <strong>Design:</strong> {similar_product['body_design']}
-                            </p>
-                            <p style="color: #cccccc;">
-                                <strong>Size Range:</strong> {similar_product['specifications']['size_range']}
-                            </p>
-                        </div>
-                        """, unsafe_allow_html=True)
+                        st.write(f"**{similar_product['title']}**")
+                        st.caption(f"Code: {similar_product['product_code']} | Joint: {similar_product['joint_type']} | Design: {similar_product['body_design']}")
+                        st.caption(f"Size Range: {similar_product['specifications']['size_range']}")
+                    
                     with col2:
                         if st.button("View Details", key=f"similar_{similar_product['id']}"):
                             st.session_state.selected_product = similar_product['id']
                             del st.session_state.show_similar
                             st.rerun()
+                    
                     st.divider()
             else:
                 st.info("No similar products found.")
         else:
             display_api_error(similar_result["error"])
+    
     else:
         display_api_error(product_result["error"])
-
-    if st.button("Back to Original Product"):
+    
+    # Back button
+    if st.button("← Back to Original Product"):
         st.session_state.selected_product = product_id
         del st.session_state.show_similar
         st.rerun()
@@ -296,11 +294,11 @@ def check_api_connection():
     """Check backend API connectivity"""
     api_client = get_api_client()
     health_result = api_client.health_check()
-
+    
     if not health_result["success"]:
         st.error("""
-        Backend API Connection Failed
-
+        **Backend API Connection Failed**
+        
         The frontend cannot connect to the backend API. Please ensure:
         1. Backend server is running on http://localhost:8000
         2. Run: `cd backend && uvicorn main:app --reload`
@@ -308,6 +306,7 @@ def check_api_connection():
         """)
         st.stop()
     else:
+        # Show connection status in sidebar
         with st.sidebar:
             st.success("API Connected")
 
@@ -315,32 +314,34 @@ def check_api_connection():
 def sidebar_info():
     """Display sidebar information"""
     with st.sidebar:
-        st.markdown("---")
-        st.markdown("### System Info")
-        st.info(f"Version: {settings.APP_TITLE}")
-        st.info(f"API: {settings.API_BASE_URL}")
+        st.divider()
+        st.subheader("System Info")
+        st.info(f"**Version:** {settings.APP_TITLE}")
+        st.info(f"**API:** {settings.API_BASE_URL}")
+        
         if settings.DEBUG:
             st.warning("Debug Mode Active")
-
-        st.markdown("---")
-        st.markdown("### Quick Tools")
+        
+        st.divider()
+        st.subheader("Quick Tools")
+        
         if st.button("Refresh Data", use_container_width=True):
             st.cache_data.clear()
             st.cache_resource.clear()
             st.success("Cache cleared!")
             time.sleep(1)
             st.rerun()
-
+        
         if st.button("API Documentation", use_container_width=True):
             st.markdown(f"[Open API Docs]({settings.API_BASE_URL}/docs)")
-
-        st.markdown("---")
-        st.markdown("### About")
-        st.markdown("""
-        SIGMA Product Catalog is a modern web application for browsing 
+        
+        st.divider()
+        st.subheader("About")
+        st.write("""
+        **SIGMA Product Catalog** is a modern web application for browsing 
         ductile iron fittings with intelligent search and AI-powered features.
-
-        Features:
+        
+        **Features:**
         - Smart product search
         - AI-enhanced queries
         - HTS code generation
@@ -350,5 +351,8 @@ def sidebar_info():
 
 
 if __name__ == "__main__":
+    # Add sidebar info
     sidebar_info()
+    
+    # Run main application
     main()
