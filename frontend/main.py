@@ -26,6 +26,11 @@ def main():
     st.title("SIGMA Product Catalog")
     st.caption("Ductile Iron Fittings with AI-Powered Search & HTS Code Generation")
     
+    # Debug toggle (remove in production)
+    if st.sidebar.checkbox("Debug Mode"):
+        st.session_state.debug_mode = True
+        st.sidebar.json(dict(st.session_state))
+    
     # Check API connectivity
     check_api_connection()
     
@@ -33,7 +38,52 @@ def main():
     if "current_page" not in st.session_state:
         st.session_state.current_page = "Home"
     
-    # Navigation menu with session state integration
+    # Handle special states first (these override normal navigation)
+    if "selected_product" in st.session_state:
+        if st.session_state.get("came_from_search"):
+            col1, col2 = st.columns([1, 5])
+            with col1:
+                if st.button("← Back to Search"):
+                    del st.session_state.selected_product
+                    del st.session_state.came_from_search
+                    st.session_state.current_page = "Search"
+                    st.rerun()
+        
+        product_detail_view(st.session_state.selected_product)
+        return
+    
+    if "show_hts" in st.session_state:
+        if st.session_state.get("came_from_search"):
+            col1, col2 = st.columns([1, 5])
+            with col1:
+                if st.button("← Back to Search"):
+                    del st.session_state.show_hts
+                    del st.session_state.came_from_search
+                    st.session_state.current_page = "Search"
+                    st.rerun()
+        
+        hts_product_view(st.session_state.show_hts)
+        
+        if not st.session_state.get("came_from_search"):
+            if st.button("← Back"):
+                del st.session_state.show_hts
+                st.rerun()
+        return
+    
+    if "show_similar" in st.session_state:
+        if st.session_state.get("came_from_search"):
+            col1, col2 = st.columns([1, 5])
+            with col1:
+                if st.button("← Back to Search"):
+                    del st.session_state.show_similar
+                    del st.session_state.came_from_search
+                    st.session_state.current_page = "Search"
+                    st.rerun()
+        
+        show_similar_products(st.session_state.show_similar)
+        return
+    
+    # Navigation menu
     menu_options = ["Home", "Search", "Catalog", "Compare", "HTS Codes", "Bulk HTS"]
     icons = ["house", "search", "grid", "arrow-repeat", "tags", "collection"]
     
@@ -56,25 +106,8 @@ def main():
     
     # Update session state when menu selection changes
     if selected != st.session_state.current_page:
-        clear_navigation_states()
         st.session_state.current_page = selected
         st.rerun()
-    
-    # Handle special states first (these override normal navigation)
-    if "selected_product" in st.session_state:
-        product_detail_view(st.session_state.selected_product)
-        return
-    
-    if "show_hts" in st.session_state:
-        hts_product_view(st.session_state.show_hts)
-        if st.button("← Back"):
-            del st.session_state.show_hts
-            st.rerun()
-        return
-    
-    if "show_similar" in st.session_state:
-        show_similar_products(st.session_state.show_similar)
-        return
     
     # Main navigation based on session state
     current_page = st.session_state.current_page
@@ -91,25 +124,6 @@ def main():
         hts_codes_interface()
     elif current_page == "Bulk HTS":
         bulk_hts_interface()
-
-
-def clear_navigation_states():
-    """Clear navigation-related session states"""
-    states_to_clear = [
-        "selected_product",
-        "show_hts", 
-        "show_similar",
-        "quick_filters",
-        "ai_query_tab",
-        "basic_search_input",
-        "show_filters",
-        "show_suggestions",
-        "show_examples"
-    ]
-    
-    for state in states_to_clear:
-        if state in st.session_state:
-            del st.session_state[state]
 
 
 def home_page():
@@ -164,20 +178,6 @@ def home_page():
         if st.button("Generate HTS Codes", use_container_width=True):
             st.session_state.current_page = "HTS Codes"
             st.rerun()
-    
-    # News feed placeholder
-    st.divider()
-    st.subheader("News & Updates")
-    
-    st.info("""
-    **News Feed Coming Soon**
-    
-    This section will feature:
-    - Product updates and releases
-    - Industry news and standards updates  
-    - Technical bulletins and advisories
-    - Training and certification announcements
-    """)
     
     # Quick filters
     st.divider()
@@ -272,7 +272,7 @@ def show_similar_products(product_id: str):
                         st.caption(f"Size Range: {similar_product['specifications']['size_range']}")
                     
                     with col2:
-                        if st.button("View Details", key=f"similar_{similar_product['id']}"):
+                        if st.button("View Details", key=f"similar_details_{similar_product['id']}"):
                             st.session_state.selected_product = similar_product['id']
                             del st.session_state.show_similar
                             st.rerun()
@@ -287,10 +287,11 @@ def show_similar_products(product_id: str):
         display_api_error(product_result["error"])
     
     # Back button
-    if st.button("← Back to Original Product"):
-        st.session_state.selected_product = product_id
-        del st.session_state.show_similar
-        st.rerun()
+    if not st.session_state.get("came_from_search"):
+        if st.button("← Back to Original Product"):
+            st.session_state.selected_product = product_id
+            del st.session_state.show_similar
+            st.rerun()
 
 
 def check_api_connection():
@@ -324,33 +325,6 @@ def sidebar_info():
         
         if settings.DEBUG:
             st.warning("Debug Mode Active")
-        
-        st.divider()
-        st.subheader("Quick Tools")
-        
-        if st.button("Refresh Data", use_container_width=True):
-            st.cache_data.clear()
-            st.cache_resource.clear()
-            st.success("Cache cleared!")
-            time.sleep(1)
-            st.rerun()
-        
-        if st.button("API Documentation", use_container_width=True):
-            st.markdown(f"[Open API Docs]({settings.API_BASE_URL}/docs)")
-        
-        st.divider()
-        st.subheader("About")
-        st.write("""
-        **SIGMA Product Catalog** is a modern web application for browsing 
-        ductile iron fittings with intelligent search and AI-powered features.
-        
-        **Features:**
-        - Smart product search
-        - AI-enhanced queries
-        - HTS code generation
-        - Product comparisons
-        - Responsive design
-        """)
 
 
 if __name__ == "__main__":
