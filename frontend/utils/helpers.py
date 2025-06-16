@@ -83,8 +83,8 @@ def create_specifications_table(product: Dict[str, Any]) -> pd.DataFrame:
     return pd.DataFrame(data)
 
 
-def create_hts_display(suggestions: List[Dict[str, Any]]) -> None:
-    """Display HTS code suggestions"""
+def create_hts_display(suggestions: List[Dict[str, Any]], use_expanders: bool = True) -> None:
+    """Display HTS code suggestions with optional expander usage"""
     if not suggestions:
         st.info("No HTS code suggestions available")
         return
@@ -92,10 +92,39 @@ def create_hts_display(suggestions: List[Dict[str, Any]]) -> None:
     for i, suggestion in enumerate(suggestions, 1):
         confidence_level = "High" if suggestion['confidence'] > 0.8 else "Medium" if suggestion['confidence'] > 0.6 else "Low"
         
-        with st.expander(f"#{i} - {suggestion['code']} ({confidence_level} Confidence)"):
-            st.write(f"**Description:** {suggestion['description']}")
-            st.write(f"**Confidence:** {suggestion['confidence']:.1%}")
-            st.write(f"**Reasoning:** {suggestion.get('reasoning', 'No reasoning provided')}")
+        if use_expanders:
+            # Use expanders when not nested
+            with st.expander(f"#{i} - {suggestion['code']} ({confidence_level} Confidence)"):
+                st.write(f"**Description:** {suggestion['description']}")
+                st.write(f"**Confidence:** {suggestion['confidence']:.1%}")
+                st.write(f"**Reasoning:** {suggestion.get('reasoning', 'No reasoning provided')}")
+        else:
+            # Use containers when nested inside expanders
+            with st.container(border=True):
+                st.markdown(f"**#{i} - {suggestion['code']} ({confidence_level} Confidence)**")
+                st.write(f"**Description:** {suggestion['description']}")
+                st.write(f"**Confidence:** {suggestion['confidence']:.1%}")
+                st.write(f"**Reasoning:** {suggestion.get('reasoning', 'No reasoning provided')}")
+
+
+def create_hts_display_flat(suggestions: List[Dict[str, Any]]) -> None:
+    """Display HTS code suggestions in flat format without expanders"""
+    if not suggestions:
+        st.info("No HTS code suggestions available")
+        return
+    
+    for i, suggestion in enumerate(suggestions, 1):
+        confidence_level = "High" if suggestion['confidence'] > 0.8 else "Medium" if suggestion['confidence'] > 0.6 else "Low"
+        
+        with st.container(border=True):
+            st.markdown(f"**#{i} - {suggestion['code']} ({confidence_level} Confidence)**")
+            
+            col1, col2 = st.columns(2)
+            with col1:
+                st.write(f"**Description:** {suggestion['description']}")
+                st.write(f"**Confidence:** {suggestion['confidence']:.1%}")
+            with col2:
+                st.write(f"**Reasoning:** {suggestion.get('reasoning', 'No reasoning provided')}")
 
 
 def search_result_display(result: Dict[str, Any]) -> None:

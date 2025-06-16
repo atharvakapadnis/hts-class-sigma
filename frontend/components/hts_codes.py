@@ -6,7 +6,7 @@ import streamlit as st
 import pandas as pd
 from typing import Dict, List, Any
 from services.api_client import get_api_client
-from utils.helpers import display_api_error, create_hts_display, show_loading
+from utils.helpers import display_api_error, create_hts_display, create_hts_display_flat, show_loading
 
 
 def hts_codes_interface():
@@ -83,7 +83,8 @@ def generate_hts_codes(product_id: str):
 
         if data["suggestions"]:
             st.markdown("### HTS Code Suggestions")
-            create_hts_display(data["suggestions"])
+            # Use the expander version since this is not nested
+            create_hts_display(data["suggestions"], use_expanders=True)
 
             # Export options
             st.markdown("### Export Options")
@@ -159,7 +160,8 @@ def hts_product_view(product_id: str):
 
         if f"hts_{product_id}" in st.session_state:
             st.markdown("### Cached HTS Codes")
-            create_hts_display(st.session_state[f"hts_{product_id}"])
+            # Use the expander version since this is not nested
+            create_hts_display(st.session_state[f"hts_{product_id}"], use_expanders=True)
 
     else:
         display_api_error(product_result["error"])
@@ -227,7 +229,8 @@ def bulk_hts_interface():
                         for result in results:
                             with st.expander(f"{result['product']}"):
                                 if result["suggestions"]:
-                                    create_hts_display(result["suggestions"])
+                                    # Use the flat version inside expanders to avoid nesting
+                                    create_hts_display_flat(result["suggestions"])
                                 else:
                                     st.warning("No suggestions generated")
 
