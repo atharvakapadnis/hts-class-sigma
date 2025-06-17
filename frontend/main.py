@@ -159,35 +159,6 @@ def home_page():
         with col4:
             st.metric("AI Features", "3", help="Search, HTS Codes, Recommendations")
     
-    # Quick actions
-    st.subheader("Quick Actions")
-    
-    col1, col2, col3 = st.columns(3)
-    
-    with col1:
-        if st.button("Start Smart Search", use_container_width=True, type="primary"):
-            st.session_state.current_page = "Search"
-            st.rerun()
-    
-    with col2:
-        if st.button("Browse Catalog", use_container_width=True):
-            st.session_state.current_page = "Catalog"
-            st.rerun()
-    
-    with col3:
-        if st.button("Generate HTS Codes", use_container_width=True):
-            st.session_state.current_page = "HTS Codes"
-            st.rerun()
-    
-    # Quick filters
-    st.divider()
-    quick_filter_result = quick_filters()
-    
-    if quick_filter_result:
-        st.session_state.quick_filters = quick_filter_result
-        st.session_state.current_page = "Search"
-        st.rerun()
-    
     # Featured products
     if products_result["success"]:
         st.divider()
